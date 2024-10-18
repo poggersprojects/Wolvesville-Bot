@@ -1,4 +1,6 @@
 require('dotenv').config();
+const { Client, GatewayIntentBits } = require('discord.js');
+const fetch = require('node-fetch');
 
 const API_URL = process.env.API_URL;
 const API_KEY = process.env.API_KEY;
@@ -20,3 +22,9 @@ async function fetchData(endpoint) {
 
     return await response.json();
 }
+
+client.once('ready', () => {
+    console.log(`Logged in as ${client.user.tag}`);
+});
+
+
