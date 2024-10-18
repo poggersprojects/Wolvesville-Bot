@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, PermissionsBitField, Permissions, SlashCommandBuilder } = require('discord.js');
 
 // Environment variables
 const API_URL = process.env.API_URL;
@@ -11,7 +11,15 @@ const CHANNEL_ID = process.env.CHANNEL_ID;
 
 // Create a new Discord client instance
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+    intents: [
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMessages, 
+        GatewayIntentBits.GuildGuilds, 
+        GatewayIntentBits.Channel, 
+        PermissionsBitField, 
+        Permissions, 
+        SlashCommandBuilder
+    ],
 });
 
 // Function to fetch data from the Wolvesville API
@@ -40,13 +48,13 @@ async function fetchData(endpoint) {
 }
 
 // Event: Bot is ready
-client.once('ready', async () => {
+client.once('ready', (c), async () => {
     console.log(`Logged in as ${client.user.tag}`);
     console.log(`Bot ID: ${BOT_ID}`);
     console.log(`User ID: ${CLIENT_ID}`);
 
     // Fetch the channel and send a message
-    const channel = client.channels.cache.get(CHANNEL_ID);
+    const channel = c.channels.cache.get(CHANNEL_ID);
     if (channel) {
         await channel.send('The bot is now online! 🎉');
     } else {
