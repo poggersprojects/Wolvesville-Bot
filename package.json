@@ -1,0 +1,15 @@
+{
+  "name": "wolvesville-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "T.A. Redelijkheid",
+  "license": "GPL-3.0",
+  "description": "A wolvesville bot.",
+  "dependencies": {
+    "superagent": "^10.1.0"
+  }
+}
