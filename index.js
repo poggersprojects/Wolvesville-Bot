@@ -62,6 +62,16 @@ client.once('ready', (c), async () => {
     }
 });
 
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (commandName === 'ping') {
+        await interaction.reply('Pong!');
+    }
+});
+
 // Log in to Discord
 (async () => {
     await client.login(DISCORD_TOKEN);
