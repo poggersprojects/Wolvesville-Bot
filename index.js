@@ -1,7 +1,6 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, PermissionsBitField, Permissions, SlashCommandBuilder } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 
-// Environment variables
 const API_URL = process.env.API_URL;
 const API_KEY = process.env.API_KEY;
 const BOT_ID = process.env.BOT_ID;
@@ -13,12 +12,7 @@ const CHANNEL_ID = process.env.CHANNEL_ID;
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds, 
-        GatewayIntentBits.GuildMessages, 
-        GatewayIntentBits.GuildGuilds, 
-        GatewayIntentBits.Channel, 
-        PermissionsBitField, 
-        Permissions, 
-        SlashCommandBuilder
+        GatewayIntentBits.GuildMessages,
     ],
 });
 
@@ -48,7 +42,7 @@ async function fetchData(endpoint) {
 }
 
 // Event: Bot is ready
-client.once('ready', (c), async () => {
+client.once('ready', async (c) => {
     console.log(`Logged in as ${client.user.tag}`);
     console.log(`Bot ID: ${BOT_ID}`);
     console.log(`User ID: ${CLIENT_ID}`);
@@ -58,10 +52,11 @@ client.once('ready', (c), async () => {
     if (channel) {
         await channel.send('The bot is now online! 🎉');
     } else {
-        console.error(`Channel with ID ${channelId} not found.`);
+        console.error(`Channel with ID ${CHANNEL_ID} not found.`);
     }
 });
 
+// Interaction handler
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) return;
 
