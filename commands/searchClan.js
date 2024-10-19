@@ -1,8 +1,9 @@
 const { SlashCommandBuilder } = require('discord.js');
-const fetch = require('node-fetch');
 
 // Function to search for clans using the Wolvesville API
 async function searchClan(clanName, API_URL, API_KEY) {
+    const fetch = (await import('node-fetch')).default;
+
     try {
         const response = await fetch(`${API_URL}/clans/search?name=${clanName}`, {
             method: 'GET',
