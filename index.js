@@ -86,10 +86,12 @@ client.on('interactionCreate', async (interaction) => {
 
     const { commandName } = interaction;
 
+    // Ping command
     if (commandName === 'ping') {
         await interaction.reply('Pong!');
     }
 
+    // Redeem hat command
     if (commandName === 'redeemhat') {
 
         await interaction.deferReply(); // Acknowledge interaction immediately while processing
