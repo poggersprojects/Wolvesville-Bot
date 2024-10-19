@@ -10,6 +10,10 @@ const commands = [
         name: 'ping',
         description: 'Replies with "Pong!"',
     },
+    {
+        name: 'searchclanbyname',
+        description: 'Searches for a clan by its name.',
+    }
 ];
 
 const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
