@@ -35,7 +35,7 @@ module.exports = {
             .setRequired(true)),
     async execute(interaction, API_URL, API_KEY) {
         const clanName = interaction.options.getString('name');
-        const pageSize = 10; // Adjust the page size as needed
+        const pageSize = 1; // Adjust the page size as needed
         const page = 1;
 
         // Call the API to search for clans
