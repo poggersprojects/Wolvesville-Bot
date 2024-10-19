@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, REST, Routes, SlashcommandBuilder } = require('discord.js');
 
 const API_URL = process.env.API_URL;
 const API_KEY = process.env.API_KEY;
@@ -17,12 +17,36 @@ const client = new Client({
 });
 
 // Function to fetch data from the Wolvesville API
-async function fetchData(endpoint) {
+async function fetchGet(endpoint) {
     const fetch = (await import('node-fetch')).default;
 
     try {
         const response = await fetch(`${API_URL}${endpoint}`, {
             method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bot ${API_KEY}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching data: ${error.message}`);
+        throw error; // Re-throw the error for further handling
+    }
+}
+
+async function fetchPost(endpoint) {
+    const fetch = (await import('node-fetch')).default;
+
+    try {
+        const response = await fetch(`${API_URL}${endpoint}`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -64,6 +88,18 @@ client.on('interactionCreate', async (interaction) => {
 
     if (commandName === 'ping') {
         await interaction.reply('Pong!');
+    }
+
+    if (commandName === 'redeemhat') {
+
+        await interaction.deferReply(); // Acknowledge interaction immediately while processing
+
+        try {
+            fetchPost("/items/redeemApiHat");
+            await interaction.editReply(`Thanks for sending me an item! Friendly regards - Freestyler_ 🎉`);
+        } catch (error) {
+            await interaction.editReply(`Failed to redeem hat: ${error.message}`);
+        }
     }
 });
 
