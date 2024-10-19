@@ -8,11 +8,11 @@ const GUILD_ID = process.env.GUILD_ID;
 const commands = [
     {
         name: 'ping',
-        description: 'Replies with "Pong!"',
+        description: 'Replies with Pong!',
     },
     {
-        name: 'searchclanbyname',
-        description: 'Searches for a clan by its name.',
+        name: 'searchclan',
+        description: 'Search for a Wolvesville clan by name.',
     }
 ];
 
