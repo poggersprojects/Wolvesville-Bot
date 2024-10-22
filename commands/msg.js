@@ -20,7 +20,7 @@ module.exports = {
     const username = interaction.user.username;
     const formattedMessage = `${username}: ${message}`;
     const CLAN_ID = process.env.CLAN_ID;
-    const API_URL = `${process.env.API_URL}clans/${CLAN_ID}/chat`;
+    const API_URL = `${process.env.API_URL}/clans/${CLAN_ID}/chat`;
     const API_KEY = process.env.API_KEY;
 
     try {
