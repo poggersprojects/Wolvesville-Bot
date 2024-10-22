@@ -17,57 +17,24 @@ module.exports = {
     console.log('msg command execution started');
 
     try {
-      await interaction.deferReply();
-      console.log('Interaction deferred');
-
-      const message = interaction.options.getString('message');
-      console.log('Message received:', message);
-
-      const username = interaction.user.username;
-      console.log('Username:', username);
-
-      const formattedMessage = `${username}: ${message}`;
-      console.log('Formatted message:', formattedMessage);
-
-      const CLAN_ID = process.env.CLAN_ID;
-      const API_URL = process.env.API_URL;
-      const API_KEY = process.env.API_KEY;
-
-      console.log(`Environment Variables - CLAN_ID: ${CLAN_ID}, API_URL: ${API_URL}, API_KEY: ${API_KEY ? 'Present' : 'Not Present'}`);
-
-      const { default: fetch } = await import('node-fetch');
-      const body = JSON.stringify({ message: formattedMessage });
-
-      console.log('Request body prepared:', body);
-
-      const response = await fetch(`${API_URL}/clans/${CLAN_ID}/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bot ${API_KEY}`,
-        },
-        body,
+      const response = await fetch(`https://api.wolvesville.com/clans/${process.env.CLAN_ID}/chat`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bot ${process.env.API_KEY}`,
+          },
+          body: JSON.stringify({ message }),
       });
 
-      console.log('API response status:', response.status);
-
-      if (!response.ok) {
-        throw new Error(`Failed to send message: ${response.statusText}`);
-      }
-
-      await interaction.editReply({ content: 'Message sent to clan chat!' });
-      console.log('Message sent successfully');
-    } catch (error) {
-      console.error('Error sending message to Wolvesville chat:', error);
-
-      // Ensure to edit the deferred reply in case of error
-      if (interaction.deferred || interaction.replied) {
-        await interaction.editReply({ content: 'Failed to send message to clan chat. Please try again later.' });
-        console.log('Error message sent');
+      if (response.ok) {
+          await interaction.reply({ content: 'Message sent successfully!', ephemeral: true });
       } else {
-        await interaction.reply({ content: 'Failed to send message to clan chat. Please try again later.', ephemeral: true });
-        console.log('Error message sent (ephemeral)');
+          const errorData = await response.json();
+          await interaction.reply({ content: `Failed to send message: ${errorData.message}`, ephemeral: true });
       }
-    }
-  },
+    } catch (error) {
+      console.error(error);
+      await interaction.reply({ content: 'An error occurred while sending the message.', ephemeral: true });
+    } 
+  }
 };
