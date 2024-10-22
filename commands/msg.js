@@ -18,6 +18,8 @@ module.exports = {
     await interaction.deferReply(); // Inform Discord that you're processing the command
 
     const message = interaction.options.getString('message');
+    const username = interaction.user.username; // Get the Discord username
+    const formattedMessage = `${username}: ${message}`; // Format the message
     const CLAN_ID = process.env.CLAN_ID; // Get CLAN_ID from environment variables
     const API_URL = `${process.env.API_URL}/clans/${CLAN_ID}/chat`; // Construct the API URL
     const API_KEY = process.env.API_KEY; // Get API_KEY from environment variables
@@ -25,7 +27,7 @@ module.exports = {
     try {
       const { default: fetch } = await import('node-fetch'); // Dynamically import fetch
 
-      const body = JSON.stringify({ message }); // Prepare the request body
+      const body = JSON.stringify({ message: formattedMessage }); // Prepare the request body with the formatted message
 
       // Make the POST request
       const response = await fetch(API_URL, {
@@ -34,7 +36,7 @@ module.exports = {
           'Content-Type': 'application/json',
           'Authorization': `Bot ${API_KEY}`, // Set the authorization header
         },
-        body // Pass the body containing the message
+        body // Pass the body containing the formatted message
       });
 
       // Check for a successful response
