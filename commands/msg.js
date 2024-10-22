@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { config } = require('dotenv');
 
-// Load environment variables from the .env file
 config();
 
 module.exports = {
@@ -15,39 +14,35 @@ module.exports = {
         .setMaxLength(100)),
   
   async execute(interaction) {
-    await interaction.deferReply(); // Inform Discord that you're processing the command
+    await interaction.deferReply();
 
     const message = interaction.options.getString('message');
-    const username = interaction.user.username; // Get the Discord username
-    const formattedMessage = `${username}: ${message}`; // Format the message
-    const CLAN_ID = process.env.CLAN_ID; // Get CLAN_ID from environment variables
-    const API_URL = `${process.env.API_URL}/clans/${CLAN_ID}/chat`; // Construct the API URL
-    const API_KEY = process.env.API_KEY; // Get API_KEY from environment variables
+    const username = interaction.user.username;
+    const formattedMessage = `${username}: ${message}`;
+    const CLAN_ID = process.env.CLAN_ID;
+    const API_URL = `${process.env.API_URL}/clans/${CLAN_ID}/chat`;
+    const API_KEY = process.env.API_KEY;
 
     try {
-      const { default: fetch } = await import('node-fetch'); // Dynamically import fetch
+      const { default: fetch } = await import('node-fetch');
 
-      const body = JSON.stringify({ message: formattedMessage }); // Prepare the request body with the formatted message
+      const body = JSON.stringify({ message: formattedMessage });
 
-      // Make the POST request
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bot ${API_KEY}`, // Set the authorization header
+          'Authorization': `Bot ${API_KEY}`,
         },
-        body // Pass the body containing the formatted message
+        body
       });
 
-      // Check for a successful response
       if (!response.ok) {
         throw new Error(`Failed to send message: ${response.statusText}`);
       }
 
-      // Confirm to the user that the message was sent
       await interaction.editReply({ content: 'Message sent to clan chat!' });
     } catch (error) {
-      // Log any errors and inform the user
       console.error('Error sending message to Wolvesville chat:', error);
       await interaction.editReply({ content: 'Failed to send message to clan chat. Please try again later.' });
     }
