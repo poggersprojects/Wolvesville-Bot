@@ -21,15 +21,19 @@ module.exports = {
       const fetch = await import('node-fetch').then(module => module.default);
 
       // Retrieve the message input from the interaction
-      const message = interaction.options.getString('message');
+      const userMessage = interaction.options.getString('message');
+      const username = interaction.user.username; // Get the username of the command executor
+
+      // Format the message
+      const formattedMessage = `${username}: ${userMessage}`;
 
       const response = await fetch(`https://api.wolvesville.com/clans/${process.env.CLAN_ID}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.API_KEY}`, // Use 'Bearer' instead of 'Bot'
+          'Authorization': `Bot ${process.env.API_KEY}`, // Use 'Bearer' instead of 'Bot'
         },
-        body: JSON.stringify({ message }), // Ensure message is included here
+        body: JSON.stringify({ message: formattedMessage }), // Send the formatted message
       });
 
       if (response.ok) {
@@ -41,6 +45,6 @@ module.exports = {
     } catch (error) {
       console.error(error);
       await interaction.reply({ content: 'An error occurred while sending the message.', ephemeral: true });
-    } 
+    }
   }
 };
