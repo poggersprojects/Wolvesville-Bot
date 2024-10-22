@@ -17,10 +17,14 @@ const commands = [
             {
                 name: 'name',
                 description: 'The name of the clan',
-                type: 3,
+                type: 3, // 3 means "STRING"
                 required: true
             }
         ]
+    },
+    {
+        name: 'shopoffers',
+        description: 'Shows the current active shop offers in Wolvesville.',
     }
 ];
 
