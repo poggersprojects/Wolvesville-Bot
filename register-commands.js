@@ -40,7 +40,7 @@ const commands = [
     },
     {
         name: 'msg',
-        description: 'Send a message in the format "<discord user>: <message>"',
+        description: 'Send a message to the Wolvesville clan',
         options: [
             {
                 name: 'message',

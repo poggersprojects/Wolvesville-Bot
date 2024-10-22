@@ -45,7 +45,12 @@ client.on('interactionCreate', async interaction => {
         await command.execute(interaction, API_URL, API_KEY);
     } catch (error) {
         console.error(`Error executing command: ${error.message}`);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+
+        if (interaction.deferred || interaction.replied) {
+            await interaction.editReply({ content: 'There was an error while executing this command!' });
+        } else {
+            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        }
     }
 });
 
