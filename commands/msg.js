@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { config } = require('dotenv');
-const fetch = require('node-fetch'); // Ensure fetch is imported
 
 config();
 
@@ -18,6 +17,9 @@ module.exports = {
     console.log('msg command execution started');
 
     try {
+      // Dynamically import node-fetch
+      const fetch = await import('node-fetch').then(module => module.default);
+
       // Retrieve the message input from the interaction
       const message = interaction.options.getString('message');
 
@@ -25,7 +27,7 @@ module.exports = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bot ${process.env.API_KEY}`, // Use 'Bearer' instead of 'Bot'
+          'Authorization': `Bearer ${process.env.API_KEY}`, // Use 'Bearer' instead of 'Bot'
         },
         body: JSON.stringify({ message }), // Ensure message is included here
       });
