@@ -81,7 +81,7 @@ module.exports = {
         const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
 
         const collector = message.createMessageComponentCollector({
-            time: 60000,
+            time: 1800000,
         });
 
         collector.on('collect', async i => {

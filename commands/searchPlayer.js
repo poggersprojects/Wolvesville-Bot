@@ -62,7 +62,6 @@ module.exports = {
                 { name: 'Total Losses', value: playerData.gameStats.totalLoseCount.toString(), inline: true },
                 { name: 'Total Ties', value: playerData.gameStats.totalTieCount.toString(), inline: true },
                 { name: 'Ranked Season Best Rank', value: playerData.rankedSeasonBestRank.toString(), inline: true },
-                { name: 'Ranked Season Skill', value: playerData.rankedSeasonSkill.toString(), inline: true },
                 { name: 'Received Roses', value: playerData.receivedRosesCount.toString(), inline: true },
                 { name: 'Sent Roses', value: playerData.sentRosesCount.toString(), inline: true }
             )
