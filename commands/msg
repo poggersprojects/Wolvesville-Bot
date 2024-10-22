@@ -1,36 +1,24 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { PermissionFlagsBits, ApplicationCommandOptionType } = require('discord.js');
-
-const cooldowns = new Map();
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('msg')
-    .setDescription('Send a message in the format "<discord user>: <message>"')
+    .setDescription('Send a message to the Wolvesville chat')
     .addStringOption(option =>
       option.setName('message')
-        .setDescription('The message you want to send')
+        .setDescription('Enter your message')
         .setRequired(true)
         .setMaxLength(100)),
   async execute(interaction) {
-    const userId = interaction.user.id;
-
-    // Cooldown check
-    const now = Date.now();
-    if (cooldowns.has(userId)) {
-      const expirationTime = cooldowns.get(userId) + 5000;
-      if (now < expirationTime) {
-        const timeLeft = (expirationTime - now) / 1000;
-        return interaction.reply({ content: `Please wait ${timeLeft.toFixed(1)} more seconds before using the command again.`, ephemeral: true });
-      }
-    }
-
     const discordUser = interaction.user.tag;
     const message = interaction.options.getString('message');
 
-    await interaction.reply(`${discordUser}: ${message}`);
-
-    cooldowns.set(userId, now);
-    setTimeout(() => cooldowns.delete(userId), 5000);
+    try {
+      // Send the message and reply to the user
+      await interaction.reply(`${discordUser}: ${message}`);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      interaction.reply({ content: 'There was an error trying to send your message. Please try again later.', ephemeral: true });
+    }
   },
 };
