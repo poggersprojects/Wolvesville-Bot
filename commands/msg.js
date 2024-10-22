@@ -20,7 +20,7 @@ module.exports = {
     const username = interaction.user.username;
     const formattedMessage = `${username}: ${message}`;
     const CLAN_ID = process.env.CLAN_ID;
-    const API_URL = `${process.env.API_URL}/clans/${CLAN_ID}/chat`;
+    const API_URL = process.env.API_URL;
     const API_KEY = process.env.API_KEY;
 
     try {
@@ -28,7 +28,7 @@ module.exports = {
 
       const body = JSON.stringify({ message: formattedMessage });
 
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/clans/${CLAN_ID}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,6 +44,7 @@ module.exports = {
       await interaction.editReply({ content: 'Message sent to clan chat!' });
     } catch (error) {
       console.error('Error sending message to Wolvesville chat:', error);
+
       await interaction.editReply({ content: 'Failed to send message to clan chat. Please try again later.' });
     }
   },
