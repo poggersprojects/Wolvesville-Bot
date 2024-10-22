@@ -1,6 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require('discord.js');
 
-// Function to get the active shop offers using Wolvesville API
+// Function to fetch the current shop offers from the Wolvesville API
 async function fetchShopOffers(API_URL, API_KEY) {
     const fetch = (await import('node-fetch')).default;
 
@@ -30,23 +30,81 @@ module.exports = {
         .setName('shopoffers')
         .setDescription('Shows the current active shop offers in Wolvesville.'),
     async execute(interaction, API_URL, API_KEY) {
-        // Fetch the active offers
-        const shopOffers = await fetchShopOffers(API_URL, API_KEY);
+        await interaction.deferReply(); // Defers the reply to avoid timeouts
 
-        if (!shopOffers || shopOffers.length === 0) {
-            await interaction.reply('There are no active shop offers at the moment.');
+        const offersData = await fetchShopOffers(API_URL, API_KEY);
+        if (!offersData || offersData.length === 0) {
+            await interaction.editReply('No offers available at this time.');
             return;
         }
 
-        // For simplicity, let's just show the first offer in the response
-        const offer = shopOffers[0];
+        let currentPage = 0;
+        const totalPages = offersData.length;
 
-        const embed = new EmbedBuilder()
-            .setTitle('Active Shop Offer')
-            .setDescription(`**Type:** ${offer.type}\n**Cost in Gems:** ${offer.costInGems}\n**Expires on:** ${new Date(offer.expireDate).toLocaleString()}`)
-            .setImage(offer.promoImageUrl) // Embed the promo image
-            .setColor(0x00FF00); // Set the color of the embed
+        const generateEmbed = (offer) => {
+            const embed = new EmbedBuilder()
+                .setTitle(`Offer #${currentPage + 1}`)
+                .setDescription(`**Cost in Gems:** ${offer.costInGems}\n**Expires:** <t:${Math.floor(new Date(offer.expireDate).getTime() / 1000)}:R>`)
+                .setImage(offer.promoImageUrl)
+                .setColor(0x00AE86);
+            return embed;
+        };
 
-        await interaction.reply({ embeds: [embed] });
-    },
+        const generateButtons = () => {
+            const prevButton = new ButtonBuilder()
+                .setCustomId('prev')
+                .setLabel('Previous')
+                .setStyle(1) // Primary
+                .setDisabled(currentPage === 0);
+
+            const nextButton = new ButtonBuilder()
+                .setCustomId('next')
+                .setLabel('Next')
+                .setStyle(1) // Primary
+                .setDisabled(currentPage === totalPages - 1);
+
+            return new ActionRowBuilder().addComponents(prevButton, nextButton);
+        };
+
+        const updateReply = async () => {
+            const embed = generateEmbed(offersData[currentPage]);
+            const buttons = generateButtons();
+            await interaction.editReply({ embeds: [embed], components: [buttons] });
+        };
+
+        // Initial reply
+        await updateReply();
+
+        // Create a message collector to listen for button clicks
+        const filter = i => i.user.id === interaction.user.id;
+        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 60000 });
+
+        collector.on('collect', async (buttonInteraction) => {
+            if (buttonInteraction.customId === 'next') {
+                currentPage++;
+            } else if (buttonInteraction.customId === 'prev') {
+                currentPage--;
+            }
+            await buttonInteraction.deferUpdate(); // Defer the button interaction to avoid timeouts
+            await updateReply(); // Update the embed and buttons based on the new page
+        });
+
+        collector.on('end', async () => {
+            // Disable the buttons once the collector ends
+            const embed = generateEmbed(offersData[currentPage]);
+            const buttons = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('prev')
+                    .setLabel('Previous')
+                    .setStyle(1)
+                    .setDisabled(true),
+                new ButtonBuilder()
+                    .setCustomId('next')
+                    .setLabel('Next')
+                    .setStyle(1)
+                    .setDisabled(true)
+            );
+            await interaction.editReply({ embeds: [embed], components: [buttons] });
+        });
+    }
 };

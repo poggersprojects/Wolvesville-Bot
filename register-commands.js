@@ -17,7 +17,7 @@ const commands = [
             {
                 name: 'name',
                 description: 'The name of the clan',
-                type: 3, // 3 means "STRING"
+                type: 3,
                 required: true
             }
         ]
