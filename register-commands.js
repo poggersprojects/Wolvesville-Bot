@@ -17,7 +17,7 @@ const commands = [
             {
                 name: 'name',
                 description: 'The name of the clan',
-                type: 3,
+                type: 3, // Type 3 corresponds to STRING
                 required: true
             }
         ]
@@ -25,6 +25,18 @@ const commands = [
     {
         name: 'shopoffers',
         description: 'Shows the current active shop offers in Wolvesville.',
+    },
+    {
+        name: 'searchplayer',
+        description: 'Search for a player by username.',
+        options: [
+            {
+                name: 'username',
+                description: 'The username of the player to search for',
+                type: 3,
+                required: true
+            }
+        ]
     }
 ];
 
