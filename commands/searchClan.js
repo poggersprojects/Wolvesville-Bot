@@ -31,8 +31,8 @@ module.exports = {
         .setDescription('Search for a Wolvesville clan by name.')
         .addStringOption(option =>
             option.setName('name')
-            .setDescription('The name of the clan')
-            .setRequired(true)),
+                .setDescription('The name of the clan')
+                .setRequired(true)),
     async execute(interaction, API_URL, API_KEY) {
         const clanName = interaction.options.getString('name');
         const pageSize = 1; // Adjust the page size as needed
