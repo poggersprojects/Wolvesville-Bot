@@ -50,7 +50,6 @@ module.exports = {
     async execute(interaction, API_URL, API_KEY) {
         const clanName = interaction.options.getString('name');
 
-        // Fetch the clan data
         const clanData = await searchClan(clanName, API_URL, API_KEY);
 
         if (!clanData || clanData.length === 0) {
@@ -63,7 +62,6 @@ module.exports = {
 
         const embed = generateClanEmbed(clanData, currentPage, totalPages);
 
-        // Create navigation buttons
         const prevButton = new ButtonBuilder()
             .setCustomId('prev')
             .setLabel('Previous')

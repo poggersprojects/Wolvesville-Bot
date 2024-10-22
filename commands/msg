@@ -1,24 +1,44 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { config } = require('dotenv');
+
+config();
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('msg')
-    .setDescription('Send a message to the Wolvesville chat')
+    .setDescription('Send a message to the Wolvesville clan chat')
     .addStringOption(option =>
       option.setName('message')
         .setDescription('Enter your message')
         .setRequired(true)
         .setMaxLength(100)),
   async execute(interaction) {
-    const discordUser = interaction.user.tag;
     const message = interaction.options.getString('message');
+    const API_URL = `${process.env.API_URL}/clans/d9ff09b9-fccb-4170-b210-50ab6b679b00/chat`;
+    const API_KEY = process.env.API_KEY;
 
     try {
-      // Send the message and reply to the user
-      await interaction.reply(`${discordUser}: ${message}`);
+      const { default: fetch } = await import('node-fetch');
+
+      const body = JSON.stringify({ message });
+
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bot ${API_KEY}`
+        },
+        body
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to send message: ${response.statusText}`);
+      }
+
+      await interaction.reply({ content: 'Message sent to clan chat!', ephemeral: true });
     } catch (error) {
-      console.error('Error sending message:', error);
-      interaction.reply({ content: 'There was an error trying to send your message. Please try again later.', ephemeral: true });
+      console.error('Error sending message to Wolvesville chat:', error);
+      await interaction.reply({ content: 'Failed to send message to clan chat. Please try again later.', ephemeral: true });
     }
   },
 };
