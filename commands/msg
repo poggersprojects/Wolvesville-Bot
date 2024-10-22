@@ -1,0 +1,36 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { PermissionFlagsBits, ApplicationCommandOptionType } = require('discord.js');
+
+const cooldowns = new Map();
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('msg')
+    .setDescription('Send a message in the format "<discord user>: <message>"')
+    .addStringOption(option =>
+      option.setName('message')
+        .setDescription('The message you want to send')
+        .setRequired(true)
+        .setMaxLength(100)),
+  async execute(interaction) {
+    const userId = interaction.user.id;
+
+    // Cooldown check
+    const now = Date.now();
+    if (cooldowns.has(userId)) {
+      const expirationTime = cooldowns.get(userId) + 5000;
+      if (now < expirationTime) {
+        const timeLeft = (expirationTime - now) / 1000;
+        return interaction.reply({ content: `Please wait ${timeLeft.toFixed(1)} more seconds before using the command again.`, ephemeral: true });
+      }
+    }
+
+    const discordUser = interaction.user.tag;
+    const message = interaction.options.getString('message');
+
+    await interaction.reply(`${discordUser}: ${message}`);
+
+    cooldowns.set(userId, now);
+    setTimeout(() => cooldowns.delete(userId), 5000);
+  },
+};

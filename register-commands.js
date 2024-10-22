@@ -17,7 +17,7 @@ const commands = [
             {
                 name: 'name',
                 description: 'The name of the clan',
-                type: 3, // Type 3 corresponds to STRING
+                type: 3,
                 required: true
             }
         ]
@@ -33,6 +33,18 @@ const commands = [
             {
                 name: 'username',
                 description: 'The username of the player to search for',
+                type: 3,
+                required: true
+            }
+        ]
+    },
+    {
+        name: 'msg',
+        description: 'Send a message in the format "<discord user>: <message>"',
+        options: [
+            {
+                name: 'message',
+                description: 'The message you want to send',
                 type: 3,
                 required: true
             }
