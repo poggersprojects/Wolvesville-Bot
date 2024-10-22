@@ -3,7 +3,6 @@ const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
-// Environment variables
 const API_URL = process.env.API_URL;
 const API_KEY = process.env.API_KEY;
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -11,12 +10,10 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
 const CHANNEL_ID = process.env.CHANNEL_ID;
 
-// Create a new Discord client instance
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
-// Load commands
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -26,11 +23,9 @@ for (const file of commandFiles) {
     client.commands.set(command.data.name, command);
 }
 
-// Event: Bot is ready
 client.once('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
-    // Fetch the channel and send a message
     const channel = client.channels.cache.get(CHANNEL_ID);
     if (channel) {
         await channel.send('The bot is now online! 🎉');
@@ -39,7 +34,6 @@ client.once('ready', async () => {
     }
 });
 
-// Event: Handle slash command interactions
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
@@ -55,5 +49,4 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-// Log in to Discord
 client.login(DISCORD_TOKEN);

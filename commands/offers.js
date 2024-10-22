@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require('discord.js');
 
-// Function to fetch the current shop offers from the Wolvesville API
 async function fetchShopOffers(API_URL, API_KEY) {
     const fetch = (await import('node-fetch')).default;
 
@@ -30,7 +29,7 @@ module.exports = {
         .setName('shopoffers')
         .setDescription('Shows the current active shop offers in Wolvesville.'),
     async execute(interaction, API_URL, API_KEY) {
-        await interaction.deferReply(); // Defers the reply to avoid timeouts
+        await interaction.deferReply();
 
         const offersData = await fetchShopOffers(API_URL, API_KEY);
         if (!offersData || offersData.length === 0) {
@@ -54,13 +53,13 @@ module.exports = {
             const prevButton = new ButtonBuilder()
                 .setCustomId('prev')
                 .setLabel('Previous')
-                .setStyle(1) // Primary
+                .setStyle(1)
                 .setDisabled(currentPage === 0);
 
             const nextButton = new ButtonBuilder()
                 .setCustomId('next')
                 .setLabel('Next')
-                .setStyle(1) // Primary
+                .setStyle(1)
                 .setDisabled(currentPage === totalPages - 1);
 
             return new ActionRowBuilder().addComponents(prevButton, nextButton);
@@ -72,10 +71,8 @@ module.exports = {
             await interaction.editReply({ embeds: [embed], components: [buttons] });
         };
 
-        // Initial reply
         await updateReply();
 
-        // Create a message collector to listen for button clicks
         const filter = i => i.user.id === interaction.user.id;
         const collector = interaction.channel.createMessageComponentCollector({ filter, time: 60000 });
 
@@ -85,12 +82,11 @@ module.exports = {
             } else if (buttonInteraction.customId === 'prev') {
                 currentPage--;
             }
-            await buttonInteraction.deferUpdate(); // Defer the button interaction to avoid timeouts
-            await updateReply(); // Update the embed and buttons based on the new page
+            await buttonInteraction.deferUpdate();
+            await updateReply();
         });
 
         collector.on('end', async () => {
-            // Disable the buttons once the collector ends
             const embed = generateEmbed(offersData[currentPage]);
             const buttons = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
