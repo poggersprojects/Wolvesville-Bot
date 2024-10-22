@@ -11,7 +11,7 @@ module.exports = {
       option.setName('message')
         .setDescription('Enter your message')
         .setRequired(true)
-        .setMaxLength(100)),
+        .setMaxLength(500)),
   
   async execute(interaction) {
     await interaction.deferReply();
