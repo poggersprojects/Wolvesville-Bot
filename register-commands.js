@@ -13,6 +13,14 @@ const commands = [
     {
         name: 'searchclan',
         description: 'Search for a Wolvesville clan by name.',
+        options: [
+            {
+                name: 'name',
+                description: 'The name of the clan',
+                type: 3,
+                required: true
+            }
+        ]
     }
 ];
 
