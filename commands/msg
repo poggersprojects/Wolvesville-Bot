@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('discord.js');
 const { config } = require('dotenv');
 
 config();
@@ -23,7 +23,7 @@ module.exports = {
 
       const body = JSON.stringify({ message });
 
-      const response = await fetch(API_URL, {
+      const response = await fetch(API_URL, API_KEY, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,6 @@ module.exports = {
         throw new Error(`Failed to send message: ${response.statusText}`);
       }
 
-      await interaction.reply({ content: 'Message sent to clan chat!', ephemeral: true });
     } catch (error) {
       console.error('Error sending message to Wolvesville chat:', error);
       await interaction.reply({ content: 'Failed to send message to clan chat. Please try again later.', ephemeral: true });
