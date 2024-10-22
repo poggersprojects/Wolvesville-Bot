@@ -44,7 +44,7 @@ module.exports = {
         const generateEmbed = (offer) => {
             const embed = new EmbedBuilder()
                 .setTitle(`Offer #${currentPage + 1}`)
-                .setDescription(`**Cost in Gems:** ${offer.costInGems}\n**Expires:** <t:${Math.floor(new Date(offer.expireDate).getTime() / 1000)}:R>`)
+                .setDescription(`\n**Expires:** <t:${Math.floor(new Date(offer.expireDate).getTime() / 1000)}:R>`)
                 .setImage(offer.promoImageUrl)
                 .setColor(0x00AE86);
             return embed;
