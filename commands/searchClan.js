@@ -1,11 +1,10 @@
-const { SlashCommandBuilder, ButtonBuilder, EmbedBuilder, ActionRowBuilder } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, EmbedBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
 
-// Function to search for clans using the Wolvesville API
-async function searchClan(clanName, API_URL, API_KEY, page, pageSize) {
+async function searchClan(clanName, API_URL, API_KEY) {
     const fetch = (await import('node-fetch')).default;
 
     try {
-        const response = await fetch(`${API_URL}/clans/search?name=${clanName}&page=${page}&pageSize=${pageSize}`, {
+        const response = await fetch(`${API_URL}/clans/search?name=${clanName}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -25,6 +24,20 @@ async function searchClan(clanName, API_URL, API_KEY, page, pageSize) {
     }
 }
 
+function generateClanEmbed(clanData, currentPage, totalPages) {
+    const clan = clanData[currentPage];
+    return new EmbedBuilder()
+        .setTitle(clan.name)
+        .setDescription(clan.description || 'No description available')
+        .addFields(
+            { name: 'XP', value: clan.xp.toString(), inline: true },
+            { name: 'Join Type', value: clan.joinType, inline: true },
+            { name: 'Language', value: clan.language, inline: true },
+            { name: 'Member Count', value: clan.memberCount.toString(), inline: true }
+        )
+        .setFooter({ text: `Page ${currentPage + 1} of ${totalPages} | Clan ID: ${clan.id}` });
+}
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('searchclan')
@@ -32,20 +45,67 @@ module.exports = {
         .addStringOption(option =>
             option.setName('name')
                 .setDescription('The name of the clan')
-                .setRequired(true)),
+                .setRequired(true)
+        ),
     async execute(interaction, API_URL, API_KEY) {
         const clanName = interaction.options.getString('name');
-        const pageSize = 1; // Adjust the page size as needed
-        const page = 1;
 
-        // Call the API to search for clans
-        const clanData = await searchClan(clanName, API_URL, API_KEY, page, pageSize);
+        // Fetch the clan data
+        const clanData = await searchClan(clanName, API_URL, API_KEY);
 
         if (!clanData || clanData.length === 0) {
             await interaction.reply('No clans found with that name.');
-        } else {
-            const clanCount = clanData.length;
-            const totalPages = Math.ceil(clanCount / pageSize);
+            return;
         }
+
+        let currentPage = 0;
+        const totalPages = clanData.length;
+
+        const embed = generateClanEmbed(clanData, currentPage, totalPages);
+
+        // Create navigation buttons
+        const prevButton = new ButtonBuilder()
+            .setCustomId('prev')
+            .setLabel('Previous')
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(true);
+
+        const nextButton = new ButtonBuilder()
+            .setCustomId('next')
+            .setLabel('Next')
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(totalPages === 1);
+
+        const row = new ActionRowBuilder().addComponents(prevButton, nextButton);
+
+        const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+
+        const collector = message.createMessageComponentCollector({
+            time: 60000,
+        });
+
+        collector.on('collect', async i => {
+            if (i.user.id !== interaction.user.id) {
+                return i.reply({ content: 'You cannot interact with this button!', ephemeral: true });
+            }
+
+            if (i.customId === 'next' && currentPage < totalPages - 1) {
+                currentPage++;
+            } else if (i.customId === 'prev' && currentPage > 0) {
+                currentPage--;
+            }
+
+            const newEmbed = generateClanEmbed(clanData, currentPage, totalPages);
+            prevButton.setDisabled(currentPage === 0);
+            nextButton.setDisabled(currentPage === totalPages - 1);
+
+            await i.update({ embeds: [newEmbed], components: [new ActionRowBuilder().addComponents(prevButton, nextButton)] });
+        });
+
+        collector.on('end', collected => {
+            prevButton.setDisabled(true);
+            nextButton.setDisabled(true);
+            interaction.editReply({ components: [new ActionRowBuilder().addComponents(prevButton, nextButton)] });
+        });
     }
 };
