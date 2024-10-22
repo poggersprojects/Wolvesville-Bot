@@ -46,36 +46,6 @@ module.exports = {
         } else {
             const clanCount = clanData.length;
             const totalPages = Math.ceil(clanCount / pageSize);
-
-            // Create an embed to display the results
-            const embed = new EmbedBuilder()
-                .setTitle(`Search Results for "${clanName}"`)
-                .setDescription(`Found ${clanCount} clan(s).`);
-
-            // Add fields for each clan
-            for (const clan of clanData) {
-                embed.addFields([
-                    { name: 'Name', value: clan.name, inline: true },
-                    { name: 'Description', value: clan.description, inline: true },
-                    // Add other fields as needed
-                ]);
-            }
-
-            // Create buttons for navigation
-            const previousButton = new ButtonBuilder()
-                .setCustomId('previous')
-                .setLabel('Previous')
-                .setStyle('Primary')
-                .setDisabled(page === 1);
-            const nextButton = new ButtonBuilder()
-                .setCustomId('next')
-                .setLabel('Next')
-                .setStyle('Primary')
-                .setDisabled(page === totalPages);
-            const row = new ActionRowBuilder()
-                .addComponents(previousButton, nextButton);
-
-            await interaction.reply({ embeds: [embed], components: [row] });
         }
-    },
+    }
 };
