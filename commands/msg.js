@@ -37,7 +37,7 @@ module.exports = {
       });
 
       if (response.ok) {
-        await interaction.reply({ content: 'Message sent successfully!', ephemeral: true });
+        await interaction.reply({ content: `Message sent successfully: ${formattedMessage}`, ephemeral: true });
       } else {
         const errorData = await response.json();
         await interaction.reply({ content: `Failed to send message: ${errorData.message}`, ephemeral: true });
