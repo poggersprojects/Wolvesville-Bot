@@ -17,23 +17,20 @@ module.exports = {
     console.log('msg command execution started');
 
     try {
-      // Dynamically import node-fetch
       const fetch = await import('node-fetch').then(module => module.default);
 
-      // Retrieve the message input from the interaction
       const userMessage = interaction.options.getString('message');
-      const username = interaction.user.username; // Get the username of the command executor
+      const username = interaction.user.username;
 
-      // Format the message
       const formattedMessage = `${username}: ${userMessage}`;
 
       const response = await fetch(`https://api.wolvesville.com/clans/${process.env.CLAN_ID}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bot ${process.env.API_KEY}`, // Use 'Bearer' instead of 'Bot'
+          'Authorization': `Bot ${process.env.API_KEY}`,
         },
-        body: JSON.stringify({ message: formattedMessage }), // Send the formatted message
+        body: JSON.stringify({ message: formattedMessage }),
       });
 
       if (response.ok) {
