@@ -19,7 +19,7 @@ This is a template repository for a Discord bot that can interact with the Wolve
 1. Clone this repository.
 2. Install the required dependencies:
    ```
-   npm install dotenv && discord.js && node-fetch && superagent
+   npm install dotenv discord.js node-fetch superagent
    ```
 <!-- end list -->
 
