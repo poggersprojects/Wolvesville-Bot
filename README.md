@@ -13,6 +13,7 @@ This is a template repository for a Discord bot that can interact with the Wolve
 - discord.js
 - dotenv
 - node-fetch
+- superagent
 
 ## Installation
 
