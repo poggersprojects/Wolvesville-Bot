@@ -3,16 +3,16 @@ This is a template repository for a Discord bot that can interact with the Wolve
 
 **The bot currently supports the following features:**
 
-> Sending a message to the Wolvesville Clan chat.
-> Searching for a Wolvesville clan by name and displaying clan information.
-> Searching for a Wolvesville player by username and displaying player information.
-> Viewing currently active shop offers in Wolvesville.
+. Sending a message to the Wolvesville Clan chat.
+. Searching for a Wolvesville clan by name and displaying clan information.
+. Searching for a Wolvesville player by username and displaying player information.
+. Viewing currently active shop offers in Wolvesville.
 
 **This bot uses the following libraries:**
 
-> discord.js
-> dotenv
-> node-fetch
+. discord.js
+. dotenv
+. node-fetch
 
 **Installation**
 
